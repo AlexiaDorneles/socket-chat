@@ -2,6 +2,7 @@
 from socket import *
 from threading import Thread
 import re
+import hashlib
 
 porta = 12001
 ip = 'localhost'	#localhost.
@@ -33,8 +34,14 @@ def inicia_servidor(servidorSoc):
 		t.setDaemon(True)
 		t.start()
 
+def analisar_hash(msg):
+	hash_mensagem = re.match(r"(.*)HASH", msg).group(1)
+	conteudo_msg = msg.split("HASH")[1]
+	hash_atual = hashlib.sha224(bytearray(conteudo_msg, "utf-8")).hexdigest()
+	return hash_mensagem == hash_atual
+
 def trata_nova_conexao(con, end_remoto):
-	nick = receber_mensagem_cliente(con).strip()
+	nick = receber_mensagem_cliente(con).strip().split("HASH")[1]
 
 	if nick in list(nick_con.keys()):
 		resposta = nick + " ja esta em uso." + get_usuarios_conectados("Nicks em uso: {}")
@@ -46,30 +53,35 @@ def trata_nova_conexao(con, end_remoto):
 
 		while True:
 			msg_remota = receber_mensagem_cliente(con)
-			if msg_remota == '' or msg_remota == 'SAIR':
-				print("A conexao com ", nick, " foi fechada.\n")
-				con.close()
-				del nick_con[nick]
-				break
 
-			elif msg_remota.split()[0] == 'SEND':
-				if "TO" in msg_remota and len(msg_remota.split("TO")) >= 1:
-					usuarioAlvo = msg_remota.split("TO")[1].strip()
-				else:
-					enviar_para_cliente(con, "Destinatário não especificado\nComando para mensagens: SEND mensagem TO usuario")
-				if usuarioAlvo not in list(nick_con.keys()):
-					enviar_para_cliente(con, "O usuário %s não está conectado" % (usuarioAlvo))
-				else:
-					try:
-						conUsuarioAlvo = nick_con[usuarioAlvo]
-						conteudoMensagem = re.match(r"SEND(.*)TO", msg_remota).group(1)
-						mensagem = "Mensagem de %s: %s" % (nick, conteudoMensagem)
-						enviar_para_cliente(conUsuarioAlvo, mensagem)
-					except error:
-						enviar_para_cliente(con, "O usuário %s não está online no momento" % (usuarioAlvo))
+			if analisar_hash(msg_remota):
+				msg_remota = msg_remota.split("HASH")[1]
+				if msg_remota == '' or msg_remota == 'SAIR':
+					print("A conexao com ", nick, " foi fechada.\n")
+					con.close()
+					del nick_con[nick]
+					break
 
-			elif msg_remota.split()[0] == 'LIST':
-				enviar_para_cliente(con, get_usuarios_conectados("Usuários conectados: {}"))
+				elif msg_remota.split()[0] == 'SEND':
+					if "TO" in msg_remota and len(msg_remota.split("TO")) >= 1:
+						usuarioAlvo = msg_remota.split("TO")[1].strip()
+					else:
+						enviar_para_cliente(con, "Destinatário não especificado\nComando para mensagens: SEND mensagem TO usuario")
+					if usuarioAlvo not in list(nick_con.keys()):
+						enviar_para_cliente(con, "O usuário %s não está conectado" % (usuarioAlvo))
+					else:
+						try:
+							conUsuarioAlvo = nick_con[usuarioAlvo]
+							conteudoMensagem = re.match(r"SEND(.*)TO", msg_remota).group(1)
+							mensagem = "Mensagem de %s: %s" % (nick, conteudoMensagem)
+							enviar_para_cliente(conUsuarioAlvo, mensagem)
+						except error:
+							enviar_para_cliente(con, "O usuário %s não está online no momento" % (usuarioAlvo))
+
+				elif msg_remota.split()[0] == 'LIST':
+					enviar_para_cliente(con, get_usuarios_conectados("Usuários conectados: {}"))
+			else:
+				enviar_para_cliente(con, "Integridade violada")
 
 #Função principal.
 if __name__ == '__main__':

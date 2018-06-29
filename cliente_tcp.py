@@ -1,6 +1,7 @@
 #-*- coding: UTF-8 -*-
 from socket import *
 from threading import Thread
+import hashlib
 
 porta = 12001
 host = 'localhost'
@@ -18,13 +19,15 @@ def receber_resposta_servidor(clienteSoc, breakLoop=False):
 			break
 
 def converter_e_enviar(clienteSoc, conteudo):
-	clienteSoc.send(bytearray(conteudo, 'utf-8'))
+	clienteSoc.send(bytearray(gerar_hash(conteudo), 'utf-8'))
 
 def printar_comandos():
 	custom_print("--------------------------------------------------------------------\n")
 	custom_print("Lista de comandos: \n-QUIT = sair do chat\n-LIST = lista os usuários conectados\n-SEND mensagem TO usuario = Para enviar uma mensagem, substituindo os campos corretamente.\n-HELP = mostra novamente a lista de comandos")
 	custom_print("--------------------------------------------------------------------\n")
 
+def gerar_hash(msg):
+    return hashlib.sha224(bytearray(msg, "utf-8")).hexdigest() + "HASH" + msg
 
 if __name__ == '__main__':
 	try:
