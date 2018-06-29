@@ -53,7 +53,10 @@ def trata_nova_conexao(con, end_remoto):
 				break
 
 			elif msg_remota.split()[0] == 'SEND':
-				usuarioAlvo = msg_remota.split("TO")[1].strip()
+				if "TO" in msg_remota and len(msg_remota.split("TO")) >= 1:
+					usuarioAlvo = msg_remota.split("TO")[1].strip()
+				else:
+					enviar_para_cliente(con, "Destinatário não especificado\nComando para mensagens: SEND mensagem TO usuario")
 				if usuarioAlvo not in list(nick_con.keys()):
 					enviar_para_cliente(con, "O usuário %s não está conectado" % (usuarioAlvo))
 				else:
