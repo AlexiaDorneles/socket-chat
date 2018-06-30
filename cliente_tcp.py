@@ -1,7 +1,13 @@
 #-*- coding: UTF-8 -*-
 from socket import *
 from threading import Thread
+from cifra import Cifra
 import hashlib
+import codecs
+import sys
+
+# Para codificação no terminal do windows
+sys.stdout = codecs.getwriter("utf-8")(sys.stdout.detach())
 
 porta = 12001
 host = 'localhost'
@@ -39,6 +45,11 @@ if __name__ == '__main__':
 		custom_print("---------------------------\n")
 
 		receber_resposta_servidor(clienteSoc, True)
+
+        # TODO: remover exeomplos ecriptografia
+		encripter = Cifra()
+		print(encripter.criptografar_conteudo("carambaaaaa, nao creio"))
+		print(encripter.descriptografar_conteudo("oa+iypffmax, |ft c+mu}"))
 
 		while True:
 			nick = input( 'Informe o seu nome de usuario: \n')
