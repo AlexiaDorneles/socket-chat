@@ -47,9 +47,9 @@ if __name__ == '__main__':
 		receber_resposta_servidor(clienteSoc, True)
 
         # TODO: remover exeomplos ecriptografia
-		encripter = Cifra()
-		print(encripter.criptografar_conteudo("carambaaaaa, nao creio"))
-		print(encripter.descriptografar_conteudo("oa+iypffmax, |ft c+mu}"))
+		# encripter = Cifra()
+		# print(encripter.criptografar_conteudo("carambaaaaa, nao creio"))
+		# print(encripter.descriptografar_conteudo("oa+iypffmax, |ft c+mu}"))
 
 		while True:
 			nick = input( 'Informe o seu nome de usuario: \n')

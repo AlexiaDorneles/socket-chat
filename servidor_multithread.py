@@ -65,18 +65,18 @@ def trata_nova_conexao(con, end_remoto):
 				elif msg_remota.split()[0] == 'SEND':
 					if "TO" in msg_remota and len(msg_remota.split("TO")) >= 1:
 						usuarioAlvo = msg_remota.split("TO")[1].strip()
+						if usuarioAlvo not in list(nick_con.keys()):
+							enviar_para_cliente(con, "O usuário %s não está conectado" % (usuarioAlvo))
+						else:
+							try:
+								conUsuarioAlvo = nick_con[usuarioAlvo]
+								conteudoMensagem = re.match(r"SEND(.*)TO", msg_remota).group(1)
+								mensagem = "Mensagem de %s: %s" % (nick, conteudoMensagem)
+								enviar_para_cliente(conUsuarioAlvo, mensagem)
+							except error:
+								enviar_para_cliente(con, "O usuário %s não está online no momento" % (usuarioAlvo))
 					else:
 						enviar_para_cliente(con, "Destinatário não especificado\nComando para mensagens: SEND mensagem TO usuario")
-					if usuarioAlvo not in list(nick_con.keys()):
-						enviar_para_cliente(con, "O usuário %s não está conectado" % (usuarioAlvo))
-					else:
-						try:
-							conUsuarioAlvo = nick_con[usuarioAlvo]
-							conteudoMensagem = re.match(r"SEND(.*)TO", msg_remota).group(1)
-							mensagem = "Mensagem de %s: %s" % (nick, conteudoMensagem)
-							enviar_para_cliente(conUsuarioAlvo, mensagem)
-						except error:
-							enviar_para_cliente(con, "O usuário %s não está online no momento" % (usuarioAlvo))
 
 				elif msg_remota.split()[0] == 'LIST':
 					enviar_para_cliente(con, get_usuarios_conectados("Usuários conectados: {}"))
