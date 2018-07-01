@@ -1,6 +1,7 @@
 #-*- coding: UTF-8 -*-
 from socket import *
 from threading import Thread
+from cifra import Cifra
 import re
 import hashlib
 
@@ -70,8 +71,9 @@ def trata_nova_conexao(con, end_remoto):
 						else:
 							try:
 								conUsuarioAlvo = nick_con[usuarioAlvo]
-								conteudoMensagem = re.match(r"SEND(.*)TO", msg_remota).group(1)
-								mensagem = "Mensagem de %s: %s" % (nick, conteudoMensagem)
+								conteudoMensagem = re.match(r"SEND(.*)TO", msg_remota).group(1).strip()
+								conteudoMensagemDescriptografado = encripter.descriptografar_conteudo(conteudoMensagem)
+								mensagem = "Mensagem de %s: %s" % (nick, conteudoMensagemDescriptografado)
 								enviar_para_cliente(conUsuarioAlvo, mensagem)
 							except error:
 								enviar_para_cliente(con, "O usuário %s não está online no momento" % (usuarioAlvo))
@@ -86,6 +88,7 @@ def trata_nova_conexao(con, end_remoto):
 #Função principal.
 if __name__ == '__main__':
 	try:
+		encripter = Cifra()
 		servidorSoc = socket(AF_INET, SOCK_STREAM)	#Socket TCP
 		t2 = Thread(target=inicia_servidor, args=(servidorSoc,))
 		t2.setDaemon(True)
