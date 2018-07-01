@@ -7,7 +7,7 @@ alfabeto = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N'
 caracteres_especiais = ['?', ',', ':', ' ', '.']
 
 # chave = "WONDERWOMAN"
-chave = "MAXIMOFF"
+chave = "OI"
 
 LIMITE_SUPERIOR = 126
 LIMITE_INFERIOR = 32
