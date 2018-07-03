@@ -21,28 +21,37 @@ def custom_print(string, sucesso=True):
         print('\x1b[%sm%s\x1b[0m' % ("31", string))
 
 
-def receber_resposta_servidor(clienteSoc, breakLoop=False):
+def receber_resposta_servidor(cliente_soc, break_loop=False):
     while True:
-        msg = clienteSoc.recv(1024).decode("utf-8")
+        msg = cliente_soc.recv(1024).decode("utf-8")
         custom_print(msg)
-        if (breakLoop):
+        if (break_loop):
             return msg
             break
 
 
-def converter_e_enviar(clienteSoc, conteudo):
-    clienteSoc.send(bytearray(gerar_hash(conteudo), 'utf-8'))
+def converter_e_enviar(cliente_soc, conteudo):
+    cliente_soc.send(bytearray(gerar_hash(conteudo), 'utf-8'))
 
 
 def printar_comandos():
     custom_print("--------------------------------------------------------------------\n")
     custom_print(
-        "Lista de comandos: \n-QUIT = sair do chat\n-LIST = lista os usuários conectados\n-SEND mensagem TO usuario = Para enviar uma mensagem, substituindo os campos corretamente.\n-HELP = mostra novamente a lista de comandos.\n-SET DEFAULT usuario = seta o destinatario default e dispensa o uso do TO")
+        "Lista de comandos: \n-QUIT = sair do chat\n-LIST = lista os usuários conectados\n-SEND mensagem TO usuario = "
+        "Para enviar uma mensagem, substituindo os campos corretamente.\n-HELP = mostra novamente a lista de "
+        "comandos.\n-SET DEFAULT usuario = seta o destinatario default e dispensa o uso do TO")
     custom_print("--------------------------------------------------------------------\n")
 
 
-def gerar_hash(msg):
-    return hashlib.sha224(bytearray(msg, "utf-8")).hexdigest() + "HASH" + msg
+def gerar_hash(msg_param):
+    return hashlib.sha224(bytearray(msg_param, "utf-8")).hexdigest() + "HASH" + msg_param
+
+
+def criptografar_conteudo(string_input, is_default=False):
+    conteudo_mensagem = re.match(r"SEND(.*)", string_input).group(1).strip() \
+        if is_default \
+        else re.match(r"SEND(.*)TO", string_input).group(1).strip()
+    return encripter.criptografar_conteudo(conteudo_mensagem)
 
 
 if __name__ == '__main__':
@@ -69,9 +78,9 @@ if __name__ == '__main__':
 
         printar_comandos()
         while True:
-            stringInput = input('')
-            if stringInput is not '':
-                comando = stringInput.split()[0]
+            string_input = input('')
+            if string_input is not '':
+                comando = string_input.split()[0]
                 if comando == 'QUIT':
                     custom_print("Obrigado por utilizar o Terminal Chat!\nVolte Sempre ;)")
                     converter_e_enviar(clienteSoc, "SAIR")
@@ -79,20 +88,18 @@ if __name__ == '__main__':
                     exit(1)
                     break
                 elif comando == 'LIST':
-                    converter_e_enviar(clienteSoc, stringInput)
+                    converter_e_enviar(clienteSoc, string_input)
                 elif comando == 'SEND':
-                    if "TO" not in stringInput:
-                        conteudoMensagem = re.match(r"SEND(.*)", stringInput).group(1).strip()
-                        conteudoCriptografado = encripter.criptografar_conteudo(conteudoMensagem)
-                        converter_e_enviar(clienteSoc, "SEND %s" % (conteudoCriptografado))
+                    if "TO" not in string_input:
+                        conteudo_criptografado = criptografar_conteudo(string_input, True)
+                        converter_e_enviar(clienteSoc, "SEND %s" % conteudo_criptografado)
                     else:
-                        conteudoMensagem = re.match(r"SEND(.*)TO", stringInput).group(1).strip()
-                        conteudoCriptografado = encripter.criptografar_conteudo(conteudoMensagem)
-                        usuarioAlvo = stringInput.split("TO")[1].strip()
-                        converter_e_enviar(clienteSoc, "SEND %s TO %s" % (conteudoCriptografado, usuarioAlvo))
-                elif comando == 'SET' and stringInput.split()[1] == 'DEFAULT':
+                        conteudo_criptografado = criptografar_conteudo(string_input)
+                        usuarioAlvo = string_input.split("TO")[1].strip()
+                        converter_e_enviar(clienteSoc, "SEND %s TO %s" % (conteudo_criptografado, usuarioAlvo))
+                elif comando == 'SET' and string_input.split()[1] == 'DEFAULT':
                     default_setado = True
-                    converter_e_enviar(clienteSoc, stringInput)
+                    converter_e_enviar(clienteSoc, string_input)
                 elif comando == 'HELP':
                     printar_comandos()
                 else:
@@ -101,4 +108,4 @@ if __name__ == '__main__':
     except timeout:
         custom_print("Tempo exedido!", False)
     except error:
-        custom_print("Erro no Cliente: %s" % (host), False)
+        custom_print("Erro no Cliente: %s" % host, False)

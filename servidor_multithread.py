@@ -26,14 +26,14 @@ def enviar_para_cliente(con, conteudo):
     con.send(bytearray(conteudo, "utf-8"))
 
 
-def inicia_servidor(servidorSoc):
-    servidorSoc.bind((ip, porta))
-    servidorSoc.listen(60)
+def inicia_servidor(servidor_soc):
+    servidor_soc.bind((ip, porta))
+    servidor_soc.listen(60)
 
     print("Servidor ativo!\nAguardando conexões.")
 
     while True:
-        conexao, end_remoto = servidorSoc.accept()
+        conexao, end_remoto = servidor_soc.accept()
         enviar_para_cliente(conexao, get_usuarios_conectados("Usuários conectados: {}"))
         t = Thread(target=trata_nova_conexao, args=(conexao, end_remoto))
         t.setDaemon(True)
@@ -45,6 +45,34 @@ def analisar_hash(msg):
     conteudo_msg = msg.split("HASH")[1]
     hash_atual = hashlib.sha224(bytearray(conteudo_msg, "utf-8")).hexdigest()
     return hash_mensagem == hash_atual
+
+
+def enviar_para_todos(nick, msg_remota, is_default=False):
+    for prop in nick_con:
+        if prop != nick:
+            conexao_envio = nick_con[prop]
+            if is_default:
+                conteudo_mensagem = re.match(r"SEND(.*)", msg_remota).group(1).strip()
+            else:
+                conteudo_mensagem = re.match(r"SEND(.*)TO", msg_remota).group(1).strip()
+            conteudo_mensagem_descriptografado = encripter.descriptografar_conteudo(
+                conteudo_mensagem)
+            mensagem = "Mensagem pública de %s: %s" % (nick, conteudo_mensagem_descriptografado)
+            enviar_para_cliente(conexao_envio, mensagem)
+
+
+def enviar_para_usuario(usuario_alvo, msg_remota, nick, con, is_default=False):
+    try:
+        con_usuario_alvo = nick_con[usuario_alvo]
+        if is_default:
+            conteudo_mensagem = re.match(r"SEND(.*)", msg_remota).group(1).strip()
+        else:
+            conteudo_mensagem = re.match(r"SEND(.*)TO", msg_remota).group(1).strip()
+        conteudo_mensagem_descriptografado = encripter.descriptografar_conteudo(conteudo_mensagem)
+        mensagem = "Mensagem de %s: %s" % (nick, conteudo_mensagem_descriptografado)
+        enviar_para_cliente(con_usuario_alvo, mensagem)
+    except error:
+        enviar_para_cliente(con, "O usuário %s não está online no momento" % usuario_alvo)
 
 
 def trata_nova_conexao(con, end_remoto):
@@ -71,62 +99,38 @@ def trata_nova_conexao(con, end_remoto):
                     break
 
                 elif msg_remota.split()[0] == 'SEND':
-                    if default is {} and ("TO" not in msg_remota or len(msg_remota.split("TO")) >= 1):
+                    if default is {} and ("TO" not in msg_remota or len(msg_remota.split("TO")) < 2):
                         enviar_para_cliente(con,
-                                            "Destinatário não especificado\nComando para mensagens: SEND mensagem TO usuario")
+                                            "Destinatário não especificado\nComando para mensagens: SEND mensagem TO "
+                                            "usuario")
                     elif "TO" in msg_remota and len(msg_remota.split("TO")) >= 1:
-                        usuarioAlvo = msg_remota.split("TO")[1].strip()
-                        if usuarioAlvo == "ALL":
-                            for prop in nick_con:
-                                if prop != nick:
-                                    conexaoEnvio = nick_con[prop]
-                                    conteudoMensagem = re.match(r"SEND(.*)TO", msg_remota).group(1).strip()
-                                    conteudoMensagemDescriptografado = encripter.descriptografar_conteudo(
-                                        conteudoMensagem)
-                                    mensagem = "Mensagem pública de %s: %s" % (nick, conteudoMensagemDescriptografado)
-                                    enviar_para_cliente(conexaoEnvio, mensagem)
+                        usuario_alvo = msg_remota.split("TO")[1].strip()
+                        if usuario_alvo == "ALL":
+                            enviar_para_todos(nick, msg_remota)
 
+                        elif usuario_alvo not in list(nick_con.keys()):
+                            enviar_para_cliente(con, "O usuário %s não está conectado" % usuario_alvo)
 
-                        elif usuarioAlvo not in list(nick_con.keys()):
-                            enviar_para_cliente(con, "O usuário %s não está conectado" % (usuarioAlvo))
                         else:
-                            try:
-                                conUsuarioAlvo = nick_con[usuarioAlvo]
-                                conteudoMensagem = re.match(r"SEND(.*)TO", msg_remota).group(1).strip()
-                                conteudoMensagemDescriptografado = encripter.descriptografar_conteudo(conteudoMensagem)
-                                mensagem = "Mensagem de %s: %s" % (nick, conteudoMensagemDescriptografado)
-                                enviar_para_cliente(conUsuarioAlvo, mensagem)
-                            except error:
-                                enviar_para_cliente(con, "O usuário %s não está online no momento" % (usuarioAlvo))
+                            enviar_para_usuario(usuario_alvo, msg_remota, nick, con)
+
                     else:
                         if default not in list(nick_con.keys()) and default != "ALL":
                             enviar_para_cliente(con, "O usuário não foi especificado")
+
                         elif default != "ALL":
-                            try:
-                                conUsuarioAlvo = nick_con[usuarioAlvo]
-                                conteudoMensagem = re.match(r"SEND(.*)", msg_remota).group(1).strip()
-                                conteudoMensagemDescriptografado = encripter.descriptografar_conteudo(conteudoMensagem)
-                                mensagem = "Mensagem de %s: %s" % (nick, conteudoMensagemDescriptografado)
-                                enviar_para_cliente(conUsuarioAlvo, mensagem)
-                            except error:
-                                enviar_para_cliente(con, "O usuário %s não está online no momento" % (usuarioAlvo))
+                            enviar_para_usuario(default, msg_remota, nick, con, True)
+
                         else:
-                            for prop in nick_con:
-                                if prop != nick:
-                                    conexaoEnvio = nick_con[prop]
-                                    conteudoMensagem = re.match(r"SEND(.*)", msg_remota).group(1).strip()
-                                    conteudoMensagemDescriptografado = encripter.descriptografar_conteudo(
-                                        conteudoMensagem)
-                                    mensagem = "Mensagem pública de %s: %s" % (nick, conteudoMensagemDescriptografado)
-                                    enviar_para_cliente(conexaoEnvio, mensagem)
+                            enviar_para_todos(nick, msg_remota, True)
 
                 elif msg_remota.split()[0] == 'SET' and msg_remota.split()[1] == 'DEFAULT':
                     if len(msg_remota.split()) == 3 and msg_remota.split()[2] is not '':
-                        usuarioAlvo = msg_remota.split()[2].strip()
-                        if usuarioAlvo not in list(nick_con.keys()) and usuarioAlvo != "ALL":
-                            enviar_para_cliente(con, "O usuário %s não está conectado" % (usuarioAlvo))
+                        usuario_alvo = msg_remota.split()[2].strip()
+                        if usuario_alvo not in list(nick_con.keys()) and usuario_alvo != "ALL":
+                            enviar_para_cliente(con, "O usuário %s não está conectado" % (usuario_alvo))
                         else:
-                            default = usuarioAlvo
+                            default = usuario_alvo
                     else:
                         enviar_para_cliente(con, "Destinatário não especificado\n")
 
