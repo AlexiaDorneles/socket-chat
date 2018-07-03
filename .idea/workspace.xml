@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7763883a-8c48-4e82-97aa-3f5b70ab5473" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cifra.py" beforeDir="false" afterPath="$PROJECT_DIR$/cifra.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cliente_tcp.py" beforeDir="false" afterPath="$PROJECT_DIR$/cliente_tcp.py" afterDir="false" />
@@ -19,8 +20,11 @@
       <file leaf-file-name="cliente_tcp.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/cliente_tcp.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="252">
-              <caret line="98" column="83" selection-start-line="98" selection-start-column="83" selection-end-line="98" selection-end-column="83" />
+            <state relative-caret-position="439">
+              <caret line="108" column="23" selection-start-line="108" selection-start-column="23" selection-end-line="108" selection-end-column="23" />
+              <folding>
+                <element signature="e#24#44#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -28,9 +32,10 @@
       <file leaf-file-name="servidor_multithread.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/servidor_multithread.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1522">
-              <caret line="41" selection-start-line="41" selection-end-line="41" />
+            <state relative-caret-position="102">
+              <caret line="6" lean-forward="true" selection-start-line="6" selection-end-line="6" />
               <folding>
+                <element signature="e#24#44#0" expanded="true" />
                 <element signature="e#225#262#0" />
                 <element signature="e#307#491#0" />
                 <element signature="e#538#576#0" />
@@ -43,8 +48,8 @@
       <file leaf-file-name="cifra.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/cifra.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="408">
-              <caret line="86" column="31" lean-forward="true" selection-start-line="86" selection-start-column="31" selection-end-line="86" selection-end-column="31" />
+            <state relative-caret-position="371">
+              <caret line="61" column="30" selection-start-line="61" selection-start-column="30" selection-end-line="61" selection-end-column="30" />
             </state>
           </provider>
         </entry>
@@ -57,7 +62,13 @@
       <find>prop in nick_con</find>
       <find>enviar_para_usuario</find>
       <find>enviar_para_todos</find>
+      <find>cifra</find>
+      <find>Cifra</find>
+      <find>encripter</find>
     </findStrings>
+    <replaceStrings>
+      <replace>Cifra</replace>
+    </replaceStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -126,14 +137,14 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
+    <frame x="-8" y="-8" width="1382" height="744" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2549168" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="right" id="R Packages" order="3" />
       <window_info anchor="right" id="R Graphics" order="3" />
-      <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
+      <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" weight="0.32838285" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Python Console" order="7" />
       <window_info anchor="bottom" id="Run" order="2" />
@@ -158,6 +169,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1054">
           <caret line="62" column="59" selection-start-line="62" selection-start-column="59" selection-end-line="62" selection-end-column="59" />
+          <folding>
+            <element signature="e#24#44#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -166,6 +180,7 @@
         <state relative-caret-position="1836">
           <caret line="108" column="102" lean-forward="true" selection-start-line="108" selection-start-column="102" selection-end-line="108" selection-end-column="102" />
           <folding>
+            <element signature="e#24#44#0" expanded="true" />
             <element signature="e#225#262#0" />
             <element signature="e#307#491#0" />
             <element signature="e#538#576#0" />
@@ -193,6 +208,7 @@
         <state relative-caret-position="1173">
           <caret line="73" lean-forward="true" selection-start-line="73" selection-end-line="73" />
           <folding>
+            <element signature="e#24#44#0" expanded="true" />
             <element signature="e#225#262#0" />
             <element signature="e#307#491#0" />
             <element signature="e#538#576#0" />
@@ -203,16 +219,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/cifra.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="408">
-          <caret line="86" column="31" lean-forward="true" selection-start-line="86" selection-start-column="31" selection-end-line="86" selection-end-column="31" />
+        <state relative-caret-position="371">
+          <caret line="61" column="30" selection-start-line="61" selection-start-column="30" selection-end-line="61" selection-end-column="30" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/servidor_multithread.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1522">
-          <caret line="41" selection-start-line="41" selection-end-line="41" />
+        <state relative-caret-position="102">
+          <caret line="6" lean-forward="true" selection-start-line="6" selection-end-line="6" />
           <folding>
+            <element signature="e#24#44#0" expanded="true" />
             <element signature="e#225#262#0" />
             <element signature="e#307#491#0" />
             <element signature="e#538#576#0" />
@@ -223,8 +240,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/cliente_tcp.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="252">
-          <caret line="98" column="83" selection-start-line="98" selection-start-column="83" selection-end-line="98" selection-end-column="83" />
+        <state relative-caret-position="439">
+          <caret line="108" column="23" selection-start-line="108" selection-start-column="23" selection-end-line="108" selection-end-column="23" />
+          <folding>
+            <element signature="e#24#44#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

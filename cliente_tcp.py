@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-from socket import *
+from socket import*
 from threading import Thread
 from cifra import Cifra
 import hashlib
@@ -11,7 +11,7 @@ import re
 sys.stdout = codecs.getwriter("utf-8")(sys.stdout.detach())
 
 porta = 12001
-host = 'localhost'
+host = '192.168.240.80'
 
 
 def custom_print(string, sucesso=True):
@@ -25,9 +25,8 @@ def receber_resposta_servidor(cliente_soc, break_loop=False):
     while True:
         msg = cliente_soc.recv(1024).decode("utf-8")
         custom_print(msg)
-        if (break_loop):
+        if break_loop:
             return msg
-            break
 
 
 def converter_e_enviar(cliente_soc, conteudo):
@@ -51,12 +50,11 @@ def criptografar_conteudo(string_input, is_default=False):
     conteudo_mensagem = re.match(r"SEND(.*)", string_input).group(1).strip() \
         if is_default \
         else re.match(r"SEND(.*)TO", string_input).group(1).strip()
-    return encripter.criptografar_conteudo(conteudo_mensagem)
+    return Cifra.criptografar_conteudo(conteudo_mensagem)
 
 
 if __name__ == '__main__':
     try:
-        encripter = Cifra()
         clienteSoc = socket(AF_INET, SOCK_STREAM)
         clienteSoc.connect((host, porta))
 

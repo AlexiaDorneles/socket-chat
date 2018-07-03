@@ -55,7 +55,7 @@ def enviar_para_todos(nick, msg_remota, is_default=False):
                 conteudo_mensagem = re.match(r"SEND(.*)", msg_remota).group(1).strip()
             else:
                 conteudo_mensagem = re.match(r"SEND(.*)TO", msg_remota).group(1).strip()
-            conteudo_mensagem_descriptografado = encripter.descriptografar_conteudo(
+            conteudo_mensagem_descriptografado = Cifra.descriptografar_conteudo(
                 conteudo_mensagem)
             mensagem = "Mensagem pública de %s: %s" % (nick, conteudo_mensagem_descriptografado)
             enviar_para_cliente(conexao_envio, mensagem)
@@ -68,7 +68,7 @@ def enviar_para_usuario(usuario_alvo, msg_remota, nick, con, is_default=False):
             conteudo_mensagem = re.match(r"SEND(.*)", msg_remota).group(1).strip()
         else:
             conteudo_mensagem = re.match(r"SEND(.*)TO", msg_remota).group(1).strip()
-        conteudo_mensagem_descriptografado = encripter.descriptografar_conteudo(conteudo_mensagem)
+        conteudo_mensagem_descriptografado = Cifra.descriptografar_conteudo(conteudo_mensagem)
         mensagem = "Mensagem de %s: %s" % (nick, conteudo_mensagem_descriptografado)
         enviar_para_cliente(con_usuario_alvo, mensagem)
     except error:
@@ -143,7 +143,6 @@ def trata_nova_conexao(con, end_remoto):
 # Função principal.
 if __name__ == '__main__':
     try:
-        encripter = Cifra()
         servidorSoc = socket(AF_INET, SOCK_STREAM)  # Socket TCP
         t2 = Thread(target=inicia_servidor, args=(servidorSoc,))
         t2.setDaemon(True)
